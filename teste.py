@@ -27,3 +27,20 @@ for i in range(10):
 
 cprint("Attention!", "red", attrs=["bold"], file=sys.stderr)
 
+for c in range(0, quantidade):
+      while true:
+            print("\nDigite a casa(s) que deseja de 0-36")
+            casa = int(input("Casa nº: "))
+            if tentativa == 0:
+                  self.apostar.append(casa)
+                  tamanho = len(self.apostar)
+                  tentativa += 1
+                  # break
+            elif tentativa == 1:
+                  for indice in range(0, tamanho):
+                        if self.apostar[indice] == casa:
+                              print(f"Valor Já existe, favor digitar novamente um valor valido")
+                              print(c)
+                        else:
+                              self.apostar.append(casa)
+                              # tentativa += 1

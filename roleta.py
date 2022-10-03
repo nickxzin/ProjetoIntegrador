@@ -157,7 +157,7 @@ class Roleta():
                   "\n[2]-Externa"
                   "\n[3]-Mista"
                   "\n[4]-Encerrar Apostas"
-                  "\n[4]-Voltar para a aba de Fichas")
+                  "\n[5]-Sair do Cassino")
             jogada = str(input("\nDigite uma opção: "))
             try:
                 jogada = int(jogada)
@@ -167,28 +167,92 @@ class Roleta():
                 true = False
         #Aposta Interna
         if jogada == 1:
+            multiplicadores = [50, 100, 500]
             tentativa = 0
-            tamanho = 0
-            true = True
+            valor_amplificador1 = 1
+            valor_amplificador2 = 1
+            valor_amplificador3 = 1
+            valor_amplificador4 = 1
+            lugar_aplificador1 = 0
+            lugar_aplificador2 = 0
+            lugar_aplificador3 = 0
+            lugar_aplificador4 = 0
+            qtda_amplificador = random.randint(1, 4)
+            randomizador = random.randint(0, 36)
+            print(randomizador)
+            if qtda_amplificador == 1:
+                valor_amplificador1 = random.choice(multiplicadores)
+                lugar_aplificador1 = random.randint(0, 36)
+            elif qtda_amplificador == 2:
+                valor_amplificador1 = random.choice(multiplicadores)
+                lugar_aplificador1 = random.randint(0, 36)
+                valor_amplificador2 = random.choice(multiplicadores)
+                lugar_aplificador2 = random.randint(0, 36)
+            elif qtda_amplificador == 3:
+                valor_amplificador1 = random.choice(multiplicadores)
+                lugar_aplificador1 = random.randint(0, 36)
+                valor_amplificador2 = random.choice(multiplicadores)
+                lugar_aplificador2 = random.randint(0, 36)
+                valor_amplificador3 = random.choice(multiplicadores)
+                lugar_aplificador3 = random.randint(0, 36)
+            elif qtda_amplificador == 4:
+                valor_amplificador1 = random.choice(multiplicadores)
+                lugar_aplificador1 = random.randint(0, 36)
+                valor_amplificador2 = random.choice(multiplicadores)
+                lugar_aplificador2 = random.randint(0, 36)
+                valor_amplificador3 = random.choice(multiplicadores)
+                lugar_aplificador3 = random.randint(0, 36)
+                valor_amplificador4 = random.choice(multiplicadores)
+                lugar_aplificador4 = random.randint(0, 36)
+            aq = 0
+            c = 0
             print(f"Digite em quantas casas deseja apostar")
             quantidade = int(input("Digite aqui um valor maior que zero: "))
-            for c in range(0, quantidade):
-                while true:
-                    print("\nDigite a casa(s) que deseja de 0-36")
-                    casa = int(input("Casa nº: "))
-                    if tentativa == 0:
+            while c < quantidade:
+                print("\nDigite a casa(s) que deseja de 0-36")
+                casa = int(input("Casa nº: "))
+                if tentativa == 0:
+                    if casa > 36 or casa < 0:
+                        print("Valor muito alto ou muito baixo, favor digitar o valor Corretamente")
+                        continue
+                    self.apostar.append(casa)
+                    tentativa += 1
+                    c += 1
+                elif tentativa == 1:
+                    if casa > 36 or casa < 0:
+                        print("Valor muito alto ou muito baixo, favor digitar o valor Corretamente")
+                        continue
+                    aq = 0
+                    for indice in range(0, len(self.apostar)):
+                        if self.apostar[indice] == casa:
+                            print(f"Valor Já existe, favor digitar novamente um valor valido")
+                            aq += 1
+                            break
+                    if aq == 0:
                         self.apostar.append(casa)
-                        tamanho = len(self.apostar)
-                        tentativa += 1
-                        break
-                    else:
-                        for indice in range(0, tamanho):
-                            if self.apostar[indice] == casa:
-                                print(f"Valor Já existe, favor digitar novamente um valor valido")
-                            else:
-                                self.apostar.append(casa)
-                                true = False
-
+                        c += 1
+                    elif aq >= 1:
+                        continue
+            #randomizador = random.randint(0, 36)
+            perdeu = 0
+            for i in range(0, len(self.apostar)):
+                if lugar_aplificador1 == self.apostar[i]:
+                    print(f"PARABENS VOCÊ GANHOU {valorFicha * valor_amplificador1}")
+                    perdeu += 1
+                if lugar_aplificador2 == self.apostar[i]:
+                    print(f"PARABENS VOCÊ GANHOU {valorFicha * valor_amplificador2}")
+                    perdeu += 1
+                if lugar_aplificador3 == self.apostar[i]:
+                    print(f"PARABENS VOCÊ GANHOU {valorFicha * valor_amplificador3}")
+                    perdeu += 1
+                if lugar_aplificador4 == self.apostar[i]:
+                    print(f"PARABENS VOCÊ GANHOU {valorFicha * valor_amplificador4}")
+                    perdeu += 1
+                if self.apostar[i] == randomizador:
+                    print(print(f"PARABENS VOCÊ GANHOU {valorFicha * (36 / quantidade)}"))
+                    perdeu += 1
+            if perdeu == 0:
+                print("Você Perdeu")
 
 
         if jogada == 2:
