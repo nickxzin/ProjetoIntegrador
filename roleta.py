@@ -212,9 +212,8 @@ class Roleta():
             print("\nDeseja fazer que tipo(s) de aposta"
                   "\n[1]-Interna"
                   "\n[2]-Externa"
-                  "\n[3]-Mista"
-                  "\n[4]-Encerrar Apostas"
-                  "\n[5]-Sair do Cassino")
+                  "\n[3]-Encerrar Apostas"
+                  "\n[4]-Sair do Cassino")
             jogada = str(input("\nDigite uma opção: "))
             try:
                 jogada = int(jogada)
@@ -286,65 +285,188 @@ class Roleta():
                 print("\nVocê Perdeu")
 
 
-        if jogada == 2:
+        elif jogada == 2:
             qtd_colunas = 0
+            achado = 0
             c = 0
             print("\nQual a jogada externa deseja fazer"
                   "\n[1]-Colunas"
                   "\n[2]-Duzias"
                   "\n[3]-Cor"
-                  "\n[4]-Altas/Baixas"
+                  "\n[4]-Par/Impar"
                   "\n[5]-1-18/19-36")
-            responda = str(input("\nDigite aqui: "))
+            while True:
+                responda = str(input("\nDigite aqui: "))
+                try:
+                    responda = int(responda)
+                except:
+                    print("Digite um valor válido")
+                else:
+                    break
+            #AQUI EU ACHO QUE SÓ PODE UMA COLUNA
             if responda == '1' or responda == "Colunas":
-                colunas_digitadas = []
-                colunas = [[3,6,9,12,15,18,21,24,27,30,33,36], [2,5,8,11,14,17,20,23,26,29,32,25], [2,5,8,11,14,17,20,23,26,29,32,25]]
+                colunas = [[3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36], [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35],
+                           [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34]]
                 verdade = True
-                while verdade:
-                    print("\nVocê Escolheu as colunas, Favor digitar quantas colunas quer escolher")
-                    qtd_colunas = str(input("Digite um valor entre 1 e 3 Aqui: "))
-                    try:
-                        qtd_colunas = int(qtd_colunas)
-                        if qtd_colunas > 3 or qtd_colunas < 1:
-                            print("Valor inexistente, favor digitar um novo valor")
-                            continue
-                    except:
-                        print(Fore.RED+"\nAlgo deu errado, favor digitar um valor novamente"+normal)
-                    else:
-                        verdade = False
                 self.mesa()
-                while c < qtd_colunas:
-                    print(f"\nQuais Colunas Você deseja?"
+                while verdade:
+                    print(f"\nQual Coluna Você deseja?"
                           f"\nDigite "
-                          f"\n[0]-Para a Primeira Coluna"
-                          f"\n[1]-Para a Segunda Coluna"
-                          f"\n[2]-Para a Terceira Coluna")
+                          f"\n[1]-Para a Primeira Coluna (3,6...)"
+                          f"\n[2]-Para a Segunda Coluna (2,5...)"
+                          f"\n[3]-Para a Terceira Coluna (1,4...)")
                     try:
                         digite = int(input("\nEscolha a sua coluna: "))
+                        if digite > 3 or digite <= 0:
+                            continue
                     except:
                         print("\nErro, Digite o valor novamente")
                         continue
-                    if c == 0:
-                        colunas_digitadas.append(digite)
-                        c += 1
-                        continue
-                    for i in range(0, digite):
-                        if digite == colunas_digitadas[i]:
-                            print("Valor já digitado, favor escolher outro")
-                            continue
-                        else:
-                            colunas_digitadas.append(digite)
-                            c += 1
+                    else:
+                        verdade = False
+                    digite -= 1
                 randomizador = random.randint(0, 36)
                 perdeu = 0
-                for r in range(0, len(colunas_digitadas)):
-                    for l in range(0, 12):
-                        if colunas[0][colunas_digitadas[r]][l] == randomizador:
-                            print(f"\nPARABENS VOCÊ GANHOU R${valorFicha * 2}")
-                            perdeu += 1
+                print(f"O numero sorteado foi o {randomizador}")
+                for l in range(0, 12):
+                    if colunas[digite][l] == randomizador:
+                        print(f"\nPARABENS VOCÊ GANHOU R${valorFicha * 2}")
+                        perdeu += 1
+                        break
                 if perdeu == 0:
-                    print(f"Você Perdeu, o dinheiro que você perdeu nessa aposta foi de {valorFicha}")
+                    print(f"Você Perdeu, o dinheiro que você perdeu nessa aposta foi de R${valorFicha}")
 
+
+            elif responda == '2' or responda == 'Duzias':
+                duzia_digitada = 0
+                duzia = [[1,2,3,4,5,6,7,8,9,10,11,12], [13,14,15,16,17,18,19,20,21,22,23,24], [25,26,27,28,29,30,31,32,33,34,35,36]]
+                verdade = True
+                self.mesa()
+                while verdade:
+                    print(f"\nQual Duzia Você deseja?"
+                          f"\nDigite "
+                          f"\n[1]-Para a Primeira Duzia"
+                          f"\n[2]-Para a Segunda Duzia"
+                          f"\n[3]-Para a Terceira Duzia")
+                    try:
+                        digite = int(input("\nEscolha a sua duzia: "))
+                        if digite > 3 or digite <= 0:
+                            continue
+                    except:
+                        print("\nErro, Digite o valor novamente")
+                        continue
+                    else:
+                        verdade = False
+                    digite -= 1
+                randomizador = random.randint(0, 36)
+                perdeu = 0
+                print(f"O numero sorteado foi o {randomizador}")
+                for l in range(0, 12):
+                    if duzia[digite][l] == randomizador:
+                        print(f"\nPARABENS VOCÊ GANHOU R${valorFicha * 2}")
+                        perdeu += 1
+                        break
+                if perdeu == 0:
+                    print(f"Você Perdeu, o dinheiro que você perdeu nessa aposta foi de R${valorFicha}")
+
+            elif responda == "3" or responda == "Cor":
+                cor = [[2,4,6,8,10,11,13,15,17,20,22,24,26,28,29,31,33,35], [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]]
+                verdade = True
+                self.mesa()
+                while verdade:
+                    print(f"\nQual Cor Você deseja?"
+                          f"\nDigite "
+                          f"\n[1]-Para a Cor Preta"
+                          f"\n[2]-Para a Cor Vermelha")
+                    try:
+                        digite = int(input("\nEscolha a sua cor: "))
+                        if digite > 2 or digite <= 0:
+                            continue
+                    except:
+                        print("\nErro, Digite o valor novamente")
+                        continue
+                    else:
+                        verdade = False
+                    digite -= 1
+                randomizador = random.randint(0, 36)
+                perdeu = 0
+                print(f"O numero sorteado foi o {randomizador}")
+                for l in range(0, 18):
+                    if cor[digite][l] == randomizador:
+                        print(f"\nPARABENS VOCÊ GANHOU R${valorFicha * 2}")
+                        perdeu += 1
+                        break
+                if perdeu == 0:
+                    print(f"Você Perdeu, o dinheiro que você perdeu nessa aposta foi de R${valorFicha}")
+
+
+            elif responda == "4" or responda == "Par/Impar":
+                conjuntos = [[2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36],
+                       [1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35]]
+                verdade = True
+                self.mesa()
+                while verdade:
+                    print(f"\nQual Escolha Você deseja?"
+                          f"\nDigite "
+                          f"\n[1]-Para a Par"
+                          f"\n[2]-Para a Impar")
+                    try:
+                        digite = int(input("\nEscolha Par ou Impar: "))
+                        if digite > 2 or digite <= 0:
+                            continue
+                    except:
+                        print("\nErro, Digite o valor novamente")
+                        continue
+                    else:
+                        verdade = False
+                    digite -= 1
+                randomizador = random.randint(0, 36)
+                perdeu = 0
+                print(f"O numero sorteado foi o {randomizador}")
+                for l in range(0, 18):
+                    if conjuntos[digite][l] == randomizador:
+                        print(f"\nPARABENS VOCÊ GANHOU R${valorFicha * 2}")
+                        perdeu += 1
+                        break
+                if perdeu == 0:
+                    print(f"Você Perdeu, o dinheiro que você perdeu nessa aposta foi de R${valorFicha}")
+
+
+            elif responda == "5" or "1-18/19-36":
+                altos = [[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18],
+                             [19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36]]
+                verdade = True
+                self.mesa()
+                while verdade:
+                    print(f"\nQual Escolha Você deseja?"
+                          f"\nDigite "
+                          f"\n[1]-Para a Numeros Baixos (1-18)"
+                          f"\n[2]-Para a Numeros Altos (19-36)")
+                    try:
+                        digite = int(input("\nEscolha Alto ou Baixo: "))
+                        if digite > 2 or digite <= 0:
+                            continue
+                    except:
+                        print("\nErro, Digite o valor novamente")
+                        continue
+                    else:
+                        verdade = False
+                    digite -= 1
+                randomizador = random.randint(0, 36)
+                perdeu = 0
+                print(f"O numero sorteado foi o {randomizador}")
+                for l in range(0, 18):
+                    if altos[digite][l] == randomizador:
+                        print(f"\nPARABENS VOCÊ GANHOU R${valorFicha * 2}")
+                        perdeu += 1
+                        break
+                if perdeu == 0:
+                    print(f"Você Perdeu, o dinheiro que você perdeu nessa aposta foi de R${valorFicha}")
+
+        elif jogada == "3":
+            print("Obrigado por jogar o nosso jogo")
+            print("Tenha um otimo dia")
+            quit()
 
 
 
