@@ -1,18 +1,37 @@
 import sqlite3
 import random
+import sys
+import CLASS
+
 from colorama import Fore, Back, Style
 from time import sleep
 import time
 
 normal = Fore.RESET
+emailparaacessar = ''
 
+#Implementar o Banco De Dados
+#con = sqlite3.connect ('CASSINO (1).db')
+#con.execute('PRAGMA foreign_keys = 1')
+#cursor = con.cursor()
 
 class Roleta():
     valor = 0
     apostar = []
-    def __init__(self, jogador:str, carteira:int):
+    def __init__(self, jogador:str, carteira:int, email:str, nomeconexao, variavelConexao, variavelCursor):
         self.jogador = jogador
-        self.cartera = carteira
+        self.carteira = carteira
+        self.email = email
+        self.nomeconexao = nomeconexao
+        self.variavelConexao = variavelConexao
+        self.variavelCursor = variavelCursor
+    def criar(self):
+        self.variavelConexao = sqlite3.connect(self.nomeconexao)
+        self.variavelConexao.execute("PRAGMA foreign_keys = 1")
+        self.variavelCursor = self.variavelConexao.cursor()
+        self.variavelCursor.execute('SELECT DINAR FROM CARTEIRA WHERE email=?', (CLASS.emailparamim,))
+        for linha in self.variavelCursor.fetchall():
+            self.carteira = linha
     def mesa(self):
         a = Back.RED
         b = Back.BLACK
@@ -103,6 +122,7 @@ class Roleta():
               "\n     --------------------------------------------------------------------------------")
 
     def inicio(self, primeiro:int=1):
+        global cor
         print(f"Olá Jogador {self.jogador} e bem-vindo ao Jogo da Roleta"
               f"\nPara começar a jogar, primeiro escolha a sua cor:")
         sleep(0.5)
@@ -117,33 +137,32 @@ class Roleta():
             escolha = str(input("Digite a cor da sua escolha aqui: "))
             try:
                 global cor
-                x = print("Cor escolhida")
                 if escolha == "1" or escolha == "verde":
                     cor = Fore.GREEN
-                    x
+                    print("Cor escolhida")
                     break
                 elif escolha == "2" or escolha == "vermelho":
                     cor = Fore.RED
-                    x
+                    print("Cor escolhida")
                     break
                 elif escolha == "3" or escolha == "azul":
                     cor = Fore.BLUE
-                    x
+                    print("Cor escolhida")
                     break
                 elif escolha == "4" or escolha == "amarelo":
                     cor = Fore.YELLOW
-                    x
+                    print("Cor escolhida")
                     break
                 elif escolha == "5" or escolha == "cinza":
                     cor = Fore.CYAN
-                    x
+                    print("Cor escolhida")
                     break
                 elif escolha == "6" or escolha == "Preto":
                     cor = Fore.BLACK
-                    x
+                    print("Cor escolhida")
                     break
                 else:
-                    print("Nenhuma cor foi escolhida, Digite um valor valido")
+                    print(Fore.RED+"Nenhuma cor foi escolhida, Digite um valor valido"+normal)
             except Exception is SyntaxError:
                 print()
     def multiplicadores(self):
@@ -208,17 +227,18 @@ class Roleta():
         tentativa = 0
         tamanho = 0
         true = True
+        self.criar()
         while true:
             print("\nDeseja fazer que tipo(s) de aposta"
                   "\n[1]-Interna"
                   "\n[2]-Externa"
                   "\n[3]-Encerrar Apostas"
-                  "\n[4]-Sair do Cassino")
+                  "\n[4]-Encerrar Programa")
             jogada = str(input("\nDigite uma opção: "))
             try:
                 jogada = int(jogada)
             except:
-                print("Valor Invalido favor digitar novamente")
+                print(Fore.RED+"Valor Invalido, favor digitar novamente"+normal)
             else:
                 true = False
         #Aposta Interna
@@ -237,10 +257,15 @@ class Roleta():
                     else:
                         break
                 except:
-                    print("Houve um erro, favor digitar novamente")
+                    print(Fore.RED+"Valor Invalido, favor digitar novamente"+normal)
             while c < quantidade:
                 print("\nDigite a casa(s) que deseja de 0-36")
-                casa = int(input("Casa nº: "))
+                casa = str(input("Casa nº: "))
+                try:
+                    casa = int(casa)
+                except:
+                    print(Fore.RED+"Valor Invalido, favor digitar novamente"+normal)
+                    continue
                 if tentativa == 0:
                     if casa > 36 or casa < 0:
                         print(Fore.RED+"\nValor muito alto ou muito baixo, favor digitar o valor Corretamente"+normal)
@@ -265,20 +290,29 @@ class Roleta():
                         continue
             randomizador = random.randint(0, 36)
             perdeu = 0
+            print(self.carteira)
+            print(f"O numero sorteado foi o {randomizador}")
             for i in range(0, len(self.apostar)):
                 if self.lugar_aplificador1 == self.apostar[i] and self.apostar[i] == randomizador:
+                    self.carteira += valorFicha * self.valor_amplificador1
                     print(f"\nPARABENS VOCÊ GANHOU R${valorFicha * self.valor_amplificador1} com um amplificador de {self.valor_amplificador1}x")
+                    self.variavelCursor.execute('UPDATE CARTEIRA SET DINAR = ? WHERE email=?', (self.carteira, emailparaacessar))
+                    self.variavelConexao.commit()
                     perdeu += 1
                 elif self.lugar_aplificador2 == self.apostar[i] and self.apostar[i] == randomizador:
+                    self.carteira += valorFicha * self.valor_amplificador2
                     print(f"\nPARABENS VOCÊ GANHOU R${valorFicha * self.valor_amplificador2} com um amplificador de {self.valor_amplificador2}x")
                     perdeu += 1
                 elif self.lugar_aplificador3 == self.apostar[i] and self.apostar[i] == randomizador:
+                    self.carteira += valorFicha * self.valor_amplificador3
                     print(f"\nPARABENS VOCÊ GANHOU R${valorFicha * self.valor_amplificador3} com um amplificador de {self.valor_amplificador3}x")
                     perdeu += 1
                 elif self.lugar_aplificador4 == self.apostar[i] and self.apostar[i] == randomizador:
+                    self.carteira += valorFicha * self.valor_amplificador4
                     print(f"\nPARABENS VOCÊ GANHOU R${valorFicha * self.valor_amplificador4} com um amplificador de {self.valor_amplificador4}x")
                     perdeu += 1
                 elif self.apostar[i] == randomizador:
+                    self.carteira += (valorFicha * (36 / quantidade))
                     print(f"\nPARABENS VOCÊ GANHOU R${valorFicha * (36 / quantidade)}")
                     perdeu += 1
             if perdeu == 0:
@@ -286,9 +320,6 @@ class Roleta():
 
 
         elif jogada == 2:
-            qtd_colunas = 0
-            achado = 0
-            c = 0
             print("\nQual a jogada externa deseja fazer"
                   "\n[1]-Colunas"
                   "\n[2]-Duzias"
@@ -303,7 +334,6 @@ class Roleta():
                     print("Digite um valor válido")
                 else:
                     break
-            #AQUI EU ACHO QUE SÓ PODE UMA COLUNA
             if responda == '1' or responda == "Colunas":
                 colunas = [[3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36], [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35],
                            [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34]]
@@ -320,7 +350,7 @@ class Roleta():
                         if digite > 3 or digite <= 0:
                             continue
                     except:
-                        print("\nErro, Digite o valor novamente")
+                        print(Fore.RED+"Valor Invalido, favor digitar novamente"+normal)
                         continue
                     else:
                         verdade = False
@@ -330,15 +360,14 @@ class Roleta():
                 print(f"O numero sorteado foi o {randomizador}")
                 for l in range(0, 12):
                     if colunas[digite][l] == randomizador:
-                        print(f"\nPARABENS VOCÊ GANHOU R${valorFicha * 2}")
+                        self.carteira += valorFicha * 3
+                        print(f"\nPARABENS VOCÊ GANHOU R${valorFicha * 3}")
                         perdeu += 1
                         break
                 if perdeu == 0:
                     print(f"Você Perdeu, o dinheiro que você perdeu nessa aposta foi de R${valorFicha}")
 
-
             elif responda == '2' or responda == 'Duzias':
-                duzia_digitada = 0
                 duzia = [[1,2,3,4,5,6,7,8,9,10,11,12], [13,14,15,16,17,18,19,20,21,22,23,24], [25,26,27,28,29,30,31,32,33,34,35,36]]
                 verdade = True
                 self.mesa()
@@ -353,7 +382,7 @@ class Roleta():
                         if digite > 3 or digite <= 0:
                             continue
                     except:
-                        print("\nErro, Digite o valor novamente")
+                        print(Fore.RED+"Valor Invalido, favor digitar novamente"+normal)
                         continue
                     else:
                         verdade = False
@@ -363,13 +392,14 @@ class Roleta():
                 print(f"O numero sorteado foi o {randomizador}")
                 for l in range(0, 12):
                     if duzia[digite][l] == randomizador:
-                        print(f"\nPARABENS VOCÊ GANHOU R${valorFicha * 2}")
+                        self.carteira += valorFicha * 3
+                        print(f"\nPARABENS VOCÊ GANHOU R${valorFicha * 3}")
                         perdeu += 1
                         break
                 if perdeu == 0:
                     print(f"Você Perdeu, o dinheiro que você perdeu nessa aposta foi de R${valorFicha}")
 
-            elif responda == "3" or responda == "Cor":
+            elif responda == 3:
                 cor = [[2,4,6,8,10,11,13,15,17,20,22,24,26,28,29,31,33,35], [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]]
                 verdade = True
                 self.mesa()
@@ -383,7 +413,7 @@ class Roleta():
                         if digite > 2 or digite <= 0:
                             continue
                     except:
-                        print("\nErro, Digite o valor novamente")
+                        print(Fore.RED+"Valor Invalido, favor digitar novamente"+normal)
                         continue
                     else:
                         verdade = False
@@ -393,12 +423,14 @@ class Roleta():
                 print(f"O numero sorteado foi o {randomizador}")
                 for l in range(0, 18):
                     if cor[digite][l] == randomizador:
+                        self.carteira += valorFicha * 2
                         print(f"\nPARABENS VOCÊ GANHOU R${valorFicha * 2}")
+                        self.variavelCursor.execute('UPDATE CARTEIRA SET DINAR = ? WHERE email=?',(self.carteira, CLASS.emailparamim))
+                        self.variavelConexao.commit()
                         perdeu += 1
                         break
                 if perdeu == 0:
                     print(f"Você Perdeu, o dinheiro que você perdeu nessa aposta foi de R${valorFicha}")
-
 
             elif responda == "4" or responda == "Par/Impar":
                 conjuntos = [[2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36],
@@ -415,7 +447,7 @@ class Roleta():
                         if digite > 2 or digite <= 0:
                             continue
                     except:
-                        print("\nErro, Digite o valor novamente")
+                        print(Fore.RED+"Valor Invalido, favor digitar novamente"+normal)
                         continue
                     else:
                         verdade = False
@@ -425,12 +457,12 @@ class Roleta():
                 print(f"O numero sorteado foi o {randomizador}")
                 for l in range(0, 18):
                     if conjuntos[digite][l] == randomizador:
+                        self.carteira += valorFicha * 2
                         print(f"\nPARABENS VOCÊ GANHOU R${valorFicha * 2}")
                         perdeu += 1
                         break
                 if perdeu == 0:
                     print(f"Você Perdeu, o dinheiro que você perdeu nessa aposta foi de R${valorFicha}")
-
 
             elif responda == "5" or "1-18/19-36":
                 altos = [[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18],
@@ -447,7 +479,7 @@ class Roleta():
                         if digite > 2 or digite <= 0:
                             continue
                     except:
-                        print("\nErro, Digite o valor novamente")
+                        print(Fore.RED+"Valor Invalido, favor digitar novamente"+normal)
                         continue
                     else:
                         verdade = False
@@ -457,13 +489,17 @@ class Roleta():
                 print(f"O numero sorteado foi o {randomizador}")
                 for l in range(0, 18):
                     if altos[digite][l] == randomizador:
+                        self.carteira += valorFicha * 2
                         print(f"\nPARABENS VOCÊ GANHOU R${valorFicha * 2}")
                         perdeu += 1
                         break
                 if perdeu == 0:
                     print(f"Você Perdeu, o dinheiro que você perdeu nessa aposta foi de R${valorFicha}")
 
-        elif jogada == "3":
+        elif jogada == 3:
+            #Voltar para a pagina principal
+            quit()
+        elif jogada == 4 or "Sair do Cassino":
             print("Obrigado por jogar o nosso jogo")
             print("Tenha um otimo dia")
             quit()
@@ -474,16 +510,19 @@ class Roleta():
 
     def fichasEOpcoes(self):
         true = True
-        print("\n"+ "-=" * 100)
-        print(f"Agora está na hora de apostar, e por isso lhe daremos duas opções a partir daqui:"
-              f"\n1-Livro de Regras"
-              f"\n2-Jogar")
         while true:
+            print("\n"+ "-=" * 100)
+            print(f"Agora está na hora de apostar, e por isso lhe daremos duas opções a partir daqui:"
+                  f"\n1-Livro de Regras"
+                  f"\n2-Jogar"
+                  f"\n3-Encerrar Aposta"
+                  f"\n4-Encerrar Programa")
             n = str(input("Qual você escolhe: ")).lower()
             try:
                 n = str(n)
             except:
-                print("Algo deu errado, favor digitar um numero valido")
+                print(Fore.RED+"Valor Invalido, favor digitar novamente"+normal)
+                continue
             #Regras de Apostas
             if n == "1" or n == "livro de regras":
                 print("\nA roleta que é jogada aqui é a roleta europeia, que conta com 37 numeros na roleta."
@@ -562,7 +601,7 @@ class Roleta():
                 jogo.mesa()
                 sleep(1.5)
                 while true:
-                    print(f"\nEscolha a sua ficha"
+                    print(cor+f"\nEscolha a sua ficha"
                           f"\n[1]-R$0.5"
                           f"\n[2]-R$2.5"
                           f"\n[3]-R$5"
@@ -570,12 +609,15 @@ class Roleta():
                           f"\n[5]-R$100"
                           f"\n[6]-R$500"
                           f"\n[7]-R$2K"
-                          f"\n[8]-R$5K")
-                    fichas = int(input("\nDigite: "))
+                          f"\n[8]-R$5K"
+                          f"\n[9]-Encerrar Aposta"
+                          f"\n[0]-Encerrar Programa"+normal)
+                    fichas = str(input("\nDigite: "))
                     try:
-                        n = int(n)
+                        fichas = int(fichas)
                     except:
-                        print(f"Algo deu errado, Digite novamente")
+                        print(Fore.RED+"Valor Invalido, favor digitar novamente"+normal)
+                        continue
                     if fichas == 1:
                         self.valor = 0.5
                         self.jogo(self.valor)
@@ -600,10 +642,21 @@ class Roleta():
                     elif fichas == 8:
                         self.valor = 5000
                         self.jogo(self.valor)
+                    elif fichas == 9:
+                        print("VOLTA PRA TELA INICIAL")
+                    elif fichas == 0:
+                        print("\nObrigado por jogar o nosso jogo")
+                        print("Tenha um otimo dia")
+                        quit()
+            elif n == '3':
+                print("\nVOLTA PRA TELA INICIAL")
+            elif n == '4':
+                print("\nObrigado por jogar o nosso jogo")
+                print("Tenha um otimo dia")
+                quit()
             else:
                 print(f"Digite um valor válido")
-global cor
-jogo = Roleta("Nícolas", 2000)
-#jogo.mesa()
-#jogo.inicio()
+
+jogo = Roleta("", 0,"hugo", 'CASSINO (1).db', 'con', 'cursor')
+jogo.inicio()
 jogo.fichasEOpcoes()
